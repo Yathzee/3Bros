@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Home, User, Mail, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import emailjs from 'emailjs-com';
+import logo from './assets/3B-logo-circle.png'; // Import the logo image
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [isMessageSent, setIsMessageSent] = useState(false);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -13,6 +16,23 @@ function App() {
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    emailjs.send('service_1gpqi8g', 'YOUR_TEMPLATE_ID', formData, 'YOUR_USER_ID')
+      .then((result) => {
+        console.log(result.text);
+        setIsMessageSent(true);
+      }, (error) => {
+        console.log(error.text);
+      });
+  };
+
   return (
     <div className="relative min-h-screen">
       {/* Navigation Bar */}
@@ -20,11 +40,14 @@ function App() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <div className="flex-shrink-0 flex items-center">
-              <img 
-                src="https://imgur.com/a/TSuz6IW.jpg"
-                alt="3 Brothers Marketing Logo"
-                className="h-8 w-auto"
-              />
+              <a href="#home" className="flex items-center space-x-2">
+                <img 
+                  src={logo} // Use the imported logo image
+                  alt="3 Brothers Marketing Logo"
+                  className="h-8 w-auto"
+                />
+                <span className="text-xl font-bold text-gray-900">3Brothers</span>
+              </a>
             </div>
 
             {/* Desktop Navigation */}
@@ -149,13 +172,13 @@ function App() {
 
           {/* Mission Statement Section */}
           <div className="mt-20">
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-12 shadow-xl">
+            <div className="bg-gradient-to-r from-blue-100 to-blue-200 rounded-xl p-12 shadow-xl">
               <div className="max-w-4xl mx-auto text-center">
-                <h3 className="text-3xl md:text-4xl font-bold text-white mb-8">
+                <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
                   Our Mission
                 </h3>
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8">
-                  <p className="text-white leading-relaxed text-lg">
+                  <p className="text-gray-700 leading-relaxed text-lg">
                     At 3 Brothers Marketing, our mission is to provide exceptional sales and account management services with a deep commitment to giving love and attention to the brands that often go unnoticed in the Minnesota, North Dakota, and Wisconsin markets. We strive to elevate these brands by building meaningful relationships with key retailers and distributors, ensuring their products receive the visibility and strategic placement they deserve. Through customized strategies, thoughtful execution, and a focus on driving real growth, we bring passion and care to every partnership. Our approach is rooted in integrity, collaboration, and a genuine dedication to delivering sustainable success for brands that are ready to shine.
                   </p>
                 </div>
@@ -169,59 +192,80 @@ function App() {
         id="contact"
         className="min-h-screen pt-16 flex items-center bg-gray-50"
       >
-        <div className="max-w-7xl mx-auto px-4 py-20">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
+        <div className="max-w-2xl mx-auto px-4 py-20">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-4xl font-bold text-center text-gray-900 mb-12">
               Contact Us
             </h2>
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <form className="space-y-6">
+            <div className="bg-white rounded-lg shadow-lg p-24 flex items-start">
+              <form className="space-y-12 w-full" onSubmit={handleSubmit}>
                 <div>
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-2xl font-medium text-gray-700"
                   >
                     Name
                   </label>
                   <input
                     type="text"
                     id="name"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-2xl"
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-2xl font-medium text-gray-700"
                   >
                     Email
                   </label>
                   <input
                     type="email"
                     id="email"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-2xl"
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="message"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-2xl font-medium text-gray-700"
                   >
                     Message
                   </label>
                   <textarea
                     id="message"
-                    rows={4}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    name="message"
+                    rows={6}
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-2xl"
                   ></textarea>
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition duration-300"
+                  className="w-full bg-blue-600 text-white text-xl px-12 py-6 rounded-md hover:bg-blue-700 transition duration-300"
                 >
                   Send Message
                 </button>
+                {isMessageSent && (
+                  <div className="mt-4 text-green-600 text-center text-2xl">
+                    Your message has been delivered. We will reach out to you in the next business day.
+                  </div>
+                )}
               </form>
+              <div className="ml-8">
+                <img 
+                  src={logo} // Use the imported logo image
+                  alt="3 Brothers Marketing Logo"
+                  className="h-32 w-auto"
+                />
+              </div>
             </div>
           </div>
         </div>

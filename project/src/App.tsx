@@ -35,7 +35,7 @@ function App() {
   };
 
   return (
-    <BrowserRouter basename="/">
+    <BrowserRouter basename="/3Bros">
       <div className="relative min-h-screen">
         {/* Navigation Bar */}
         <nav className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
